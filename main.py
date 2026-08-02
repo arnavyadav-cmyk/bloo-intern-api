@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Path
+from fastapi import FastAPI, Path, Query
+from typing import Optional
 
 app = FastAPI()
 
@@ -34,3 +35,10 @@ def user(
     )
 ):
     return inventory[user_id]
+
+@app.get("/users")
+def get_users(name: Optional[str] = None):
+    for user_id in inventory:
+        if inventory[user_id]["name"] == name:
+            return inventory[user_id]
+    return {"message": "user not found"}
