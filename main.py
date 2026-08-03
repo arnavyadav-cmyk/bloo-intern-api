@@ -31,6 +31,10 @@ def hello():
 def health():
     return {"status": "healthy"}
 
+@app.get("/ready")
+def ready():
+    return {"status": "ready"}
+
 @app.get("/user/{user_id}")
 def user(
     user_id: int = Path(
