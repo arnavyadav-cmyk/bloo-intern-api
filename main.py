@@ -1,5 +1,10 @@
 from fastapi import FastAPI, Path, Query
 from typing import Optional
+from pydantic import BaseModel
+
+class User(BaseModel):
+    name: str
+    role: str
 
 app = FastAPI()
 
@@ -42,3 +47,13 @@ def get_users(name: Optional[str] = None):
         if inventory[user_id]["name"] == name:
             return inventory[user_id]
     return {"message": "user not found"}
+
+@app.post("/users")
+def create_user(user: User):
+    user_id = max(inventory) + 1
+
+    inventory[user_id] = {
+        "name": user.name,
+        "role": user.role
+    }
+    return user
