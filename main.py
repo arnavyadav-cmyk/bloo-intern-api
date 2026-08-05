@@ -2,6 +2,8 @@ from fastapi import FastAPI, Path, Query
 from typing import Optional
 from pydantic import BaseModel
 import logging
+import time
+from pythonjsonlogger import jsonlogger
 
 logging.basicConfig(
     level=logging.INFO,
@@ -12,7 +14,39 @@ class User(BaseModel):
     name: str
     role: str
 
+logger = logging.getLogger()
+
+handler = logging.StreamHandler()
+
+formatter = jsonlogger.JsonFormatter(
+    "%(asctime)s %(levelname)s %(message)s"
+)
+
+handler.setFormatter(formatter)
+
+logger.addHandler(handler)
+
+logger.setLevel(logging.INFO)
+
+
 app = FastAPI()
+
+
+@app.middleware("http")
+async def log_requests(request, call_next):
+    start_time = time.time()
+
+    response = await call_next(request)
+
+    duration = (time.time() - start_time) * 1000
+
+    logger.info(
+        f"{request.method} {request.url.path} "
+        f"Status: {response.status_code} "
+        f"Time: {duration:.2f} ms"
+    )
+
+    return response
 
 inventory = {
     1: {
@@ -27,22 +61,22 @@ inventory = {
 
 @app.get("/")
 def home():
-    logging.info("Home endpoint accessed")
+    logger.info("Home endpoint accessed")
     return {"message": "welcome to my app"}
 
 @app.get("/hello")
 def hello():
-    logging.info("Hello endpoint accessed")
+    logger.info("Hello endpoint accessed")
     return {"message": "hello World"}
 
 @app.get("/health")
 def health():
-    logging.info("Health check requested")
+    logger.info("Health check requested")
     return {"status": "healthy"}
 
 @app.get("/ready")
 def ready():
-    logging.info("Ready check requested")
+    logger.info("Ready check requested")
     return {"status": "ready"}
 
 @app.get("/user/{user_id}")
@@ -70,5 +104,5 @@ def create_user(user: User):
         "name": user.name,
         "role": user.role
     }
-    logging.info(f"User created: {user.name}")
+    logger.info(f"User created: {user.name}")
     return user
