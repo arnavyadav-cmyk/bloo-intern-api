@@ -32,14 +32,17 @@ def home():
 
 @app.get("/hello")
 def hello():
+    logging.info("Hello endpoint accessed")
     return {"message": "hello World"}
 
 @app.get("/health")
 def health():
+    logging.info("Health check requested")
     return {"status": "healthy"}
 
 @app.get("/ready")
 def ready():
+    logging.info("Ready check requested")
     return {"status": "ready"}
 
 @app.get("/user/{user_id}")
@@ -67,4 +70,5 @@ def create_user(user: User):
         "name": user.name,
         "role": user.role
     }
+    logging.info(f"User created: {user.name}")
     return user
