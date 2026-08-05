@@ -1,6 +1,12 @@
 from fastapi import FastAPI, Path, Query
 from typing import Optional
 from pydantic import BaseModel
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s"
+)
 
 class User(BaseModel):
     name: str
@@ -21,6 +27,7 @@ inventory = {
 
 @app.get("/")
 def home():
+    logging.info("Home endpoint accessed")
     return {"message": "welcome to my app"}
 
 @app.get("/hello")
