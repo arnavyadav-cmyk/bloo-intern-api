@@ -19,7 +19,7 @@ logger = logging.getLogger()
 handler = logging.StreamHandler()
 
 formatter = jsonlogger.JsonFormatter(
-    "%(asctime)s %(levelname)s %(message)s"
+    "%(asctime)s %(levelname)s %(message)s %(method)s %(path)s %(status_code)s %(duration_ms)s"
 )
 
 handler.setFormatter(formatter)
@@ -36,15 +36,24 @@ app = FastAPI()
 async def log_requests(request, call_next):
     start_time = time.time()
 
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+
+    except Exception as e:
+        logger.exception(...)
+    raise
 
     duration = (time.time() - start_time) * 1000
 
     logger.info(
-        f"{request.method} {request.url.path} "
-        f"Status: {response.status_code} "
-        f"Time: {duration:.2f} ms"
-    )
+    "HTTP request completed",
+    extra={
+        "method": request.method,
+        "path": request.url.path,
+        "status_code": response.status_code,
+        "duration_ms": round(duration, 2)
+    }
+)
 
     return response
 
