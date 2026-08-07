@@ -36,24 +36,28 @@ app = FastAPI()
 async def log_requests(request, call_next):
     start_time = time.time()
 
+    response = None
+    status_code = 500
+
     try:
         response = await call_next(request)
+        status_code = response.status_code
 
     except Exception as e:
-        logger.exception(...)
-    raise
+        logger.exception("request failed")
+        raise
+    finally:
+        duration = (time.time() - start_time) * 1000
 
-    duration = (time.time() - start_time) * 1000
-
-    logger.info(
-    "HTTP request completed",
-    extra={
-        "method": request.method,
-        "path": request.url.path,
-        "status_code": response.status_code,
-        "duration_ms": round(duration, 2)
-    }
-)
+        logger.info(
+            "HTTP request completed",
+            extra={
+                "method": request.method,
+                "path": request.url.path,
+                "status_code": status_code,
+                "duration_ms": round(duration, 2)
+            }
+        )
 
     return response
 
