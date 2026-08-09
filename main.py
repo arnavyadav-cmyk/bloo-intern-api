@@ -74,22 +74,18 @@ inventory = {
 
 @app.get("/")
 def home():
-    logger.info("Home endpoint accessed")
     return {"message": "welcome to my app"}
 
 @app.get("/hello")
 def hello():
-    logger.info("Hello endpoint accessed")
-    return {"message": "hello World"}
+    return {"message": "hello from Docker v2"}
 
 @app.get("/health")
 def health():
-    logger.info("Health check requested")
     return {"status": "healthy"}
 
 @app.get("/ready")
 def ready():
-    logger.info("Ready check requested")
     return {"status": "ready"}
 
 @app.get("/user/{user_id}")
