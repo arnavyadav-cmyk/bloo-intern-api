@@ -21,5 +21,19 @@ spec:
         - name: bloo-intern-api
           image: bloo-intern-api:v2
           imagePullPolicy: Never
+
+          env:
+            - name: APP_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: bloo-intern-config
+                  key: APP_NAME
+
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bloo-intern-secret
+                  key: API_KEY
+
           ports:
             - containerPort: 8000
