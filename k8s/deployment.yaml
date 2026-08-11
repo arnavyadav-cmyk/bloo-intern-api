@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: bloo-intern-api
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: bloo-intern-api
+
+  template:
+    metadata:
+      labels:
+        app: bloo-intern-api
+
+    spec:
+      containers:
+        - name: bloo-intern-api
+          image: bloo-intern-api:v2
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
